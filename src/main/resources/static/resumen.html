@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AirTickets</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    /* Hacer el contenido principal desplazable */
+    .shell {
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .content {
+      overflow-y: auto;
+      height: calc(100vh - 80px);
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      margin-right: 8px;
+    }
+
+    .badge.gray {
+      background-color: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+
+    .badge.purple {
+      background-color: #8e24aa;
+      color: white;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn.secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn.primary {
+      background-color: #8e24aa;
+      color: white;
+    }
+
+    .right {
+      float: right;
+    }
+
+    .section-title {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .pasajero-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 15px;
+      background-color: #f9f9f9;
+    }
+
+    .pasajero-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #8e24aa;
+      font-size: 16px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .info-item {
+      margin-bottom: 8px;
+    }
+
+    .info-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .info-item span {
+      color: #333;
+      font-size: 14px;
+    }
+
+    .total-section {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 4px solid #8e24aa;
+    }
+
+    .total-section h4 {
+      margin: 0 0 15px 0;
+      color: #333;
+    }
+
+    .vuelo-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .vuelo-info-item {
+      margin-bottom: 10px;
+    }
+
+    .vuelo-info-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #555;
+      font-size: 13px;
+    }
+
+    .precio-total {
+      font-size: 24px;
+      font-weight: bold;
+      color: #8e24aa;
+      text-align: right;
+    }
+
+    .precio-subtitle {
+      font-size: 14px;
+      color: #666;
+      text-align: right;
+    }
+
+    /* Espacio adicional al final para permitir scroll */
+    .spacer {
+      height: 50px;
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-badge">✈</div>
+      <div>
+        <div class="brand-title">AirTickets</div>
+        <div class="brand-sub">Admin</div>
+      </div>
+    </div>
+  </header>
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="index.html" class=""><span class="icon">🏠</span><span>Inicio</span></a>
+      <a href="buscar.html" class="active"><span class="icon">✈️</span><span>Vuelos</span></a>
+      <a href="reservas.html" class=""><span class="icon">📖</span><span>Reservaciones</span></a>
+      <a href="aerolineas.html" class=""><span class="icon">🛩️</span><span>Aerolíneas</span></a>
+      <a href="estadisticas.html" class=""><span class="icon">📊</span><span>Estadísticas</span></a>
+      <a href="reclamos.html" class=""><span class="icon">💬</span><span>Reclamos</span></a>
+    </nav>
+  </aside>
+  <main class="content">
+    <div class="card">
+      <h3 class="section-title">Resumen de Reserva</h3>
+
+      <!-- Información del Vuelo -->
+      <div class="total-section">
+        <h4>✈ Detalles del Vuelo</h4>
+        <div id="detallesVuelo">
+          <!-- La información del vuelo se cargará dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Información de los Pasajeros -->
+      <div style="margin-top: 25px;">
+        <h4>👥 Información de los Pasajeros</h4>
+        <div id="listaPasajeros">
+          <!-- La información de los pasajeros se cargará dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Resumen de Pago -->
+      <div class="total-section">
+        <h4>💰 Resumen de Pago</h4>
+        <div id="resumenPago">
+          <!-- El resumen de pago se cargará dinámicamente -->
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:25px">
+        <a class="btn secondary" href="pasajero.html">Volver</a>
+        <a id="btnContinuarPago" class="btn primary right" href="pago.html">Continuar al Pago</a>
+      </div>
+    </div>
+
+    <!-- Espacio adicional para permitir scroll suave -->
+    <div class="spacer"></div>
+  </main>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Obtener datos del vuelo y pasajeros desde sessionStorage
+    const vueloSeleccionado = JSON.parse(sessionStorage.getItem('vueloSeleccionado') || '{}');
+    const busqueda = JSON.parse(sessionStorage.getItem('busqueda') || '{}');
+    const datosPasajeros = JSON.parse(sessionStorage.getItem('datosPasajeros') || '[]');
+
+    const numPasajeros = busqueda.numPasajeros || datosPasajeros.length || 1;
+    const precioTotal = vueloSeleccionado.price ? vueloSeleccionado.price * numPasajeros : 0;
+
+    // Mostrar detalles del vuelo
+    const detallesVuelo = document.getElementById('detallesVuelo');
+    if (vueloSeleccionado.airline && vueloSeleccionado.origin) {
+      detallesVuelo.innerHTML = `
+        <div class="vuelo-info-grid">
+          <div class="vuelo-info-item">
+            <strong>Aerolínea:</strong>
+            <span class="badge gray">${vueloSeleccionado.airline}</span>
+          </div>
+          <div class="vuelo-info-item">
+            <strong>Número de Vuelo:</strong>
+            <span class="badge gray">${vueloSeleccionado.code}</span>
+          </div>
+          <div class="vuelo-info-item">
+            <strong>Ruta:</strong>
+            <span class="badge gray">${vueloSeleccionado.origin} → ${vueloSeleccionado.destination}</span>
+          </div>
+          <div class="vuelo-info-item">
+            <strong>Salida:</strong>
+            <span class="badge gray">${vueloSeleccionado.departureTime}</span>
+          </div>
+          <div class="vuelo-info-item">
+            <strong>Llegada:</strong>
+            <span class="badge gray">${vueloSeleccionado.arrivalTime}</span>
+          </div>
+          <div class="vuelo-info-item">
+            <strong>Duración:</strong>
+            <span class="badge gray">${vueloSeleccionado.duration}</span>
+          </div>
+          <div class="vuelo-info-item">
+            <strong>Aeronave:</strong>
+            <span class="badge gray">${vueloSeleccionado.aircraft}</span>
+          </div>
+          <div class="vuelo-info-item">
+            <strong>Tipo:</strong>
+            <span class="badge ${vueloSeleccionado.escala ? 'gray' : 'purple'}">
+              ${vueloSeleccionado.escala ? 'Vuelo con Escala' : 'Vuelo Directo'}
+            </span>
+          </div>
+        </div>
+      `;
+    } else {
+      detallesVuelo.innerHTML = '<p>No se encontró información del vuelo seleccionado.</p>';
+    }
+
+    // Mostrar información de los pasajeros
+    const listaPasajeros = document.getElementById('listaPasajeros');
+    if (datosPasajeros.length > 0) {
+      datosPasajeros.forEach((pasajero, index) => {
+        const pasajeroCard = document.createElement('div');
+        pasajeroCard.className = 'pasajero-card';
+        pasajeroCard.innerHTML = `
+          <div class="pasajero-title">Pasajero ${index + 1}</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Nombre:</strong>
+              <span>${pasajero.nombre}</span>
+            </div>
+            <div class="info-item">
+              <strong>Fecha de Nacimiento:</strong>
+              <span>${pasajero.fechaNacimiento}</span>
+            </div>
+            <div class="info-item">
+              <strong>Pasaporte:</strong>
+              <span>${pasajero.pasaporte}</span>
+            </div>
+            <div class="info-item">
+              <strong>Preferencia de Asiento:</strong>
+              <span>${pasajero.preferenciaAsiento}</span>
+            </div>
+            <div class="info-item">
+              <strong>Email:</strong>
+              <span>${pasajero.email}</span>
+            </div>
+            <div class="info-item">
+              <strong>Teléfono:</strong>
+              <span>${pasajero.telefono}</span>
+            </div>
+          </div>
+        `;
+        listaPasajeros.appendChild(pasajeroCard);
+      });
+    } else {
+      listaPasajeros.innerHTML = '<p>No se encontró información de los pasajeros.</p>';
+    }
+
+    // Mostrar resumen de pago
+    const resumenPago = document.getElementById('resumenPago');
+    resumenPago.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <div class="info-item">
+            <strong>Pasajeros:</strong>
+            <span>${numPasajeros}</span>
+          </div>
+          <div class="info-item">
+            <strong>Precio unitario:</strong>
+            <span>$${vueloSeleccionado.price ? vueloSeleccionado.price.toLocaleString() : '0'}</span>
+          </div>
+          <div class="info-item">
+            <strong>Subtotal:</strong>
+            <span>$${precioTotal.toLocaleString()}</span>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div class="precio-total">
+            $${precioTotal.toLocaleString()}
+          </div>
+          <div class="precio-subtitle">Total a pagar</div>
+        </div>
+      </div>
+    `;
+
+    // Guardar información completa para la página de pago
+    const reservaCompleta = {
+      vuelo: vueloSeleccionado,
+      pasajeros: datosPasajeros,
+      total: precioTotal,
+      busqueda: busqueda
+    };
+    sessionStorage.setItem('reservaCompleta', JSON.stringify(reservaCompleta));
+  });
+</script>
+</body>
+</html>

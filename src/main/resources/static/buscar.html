@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AirTickets</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    .error-message {
+      color: #dc2626;
+      font-size: 12px;
+      margin-top: 4px;
+      display: none;
+    }
+    .input-error {
+      border-color: #dc2626 !important;
+      background-color: #fef2f2;
+    }
+    .success-message {
+      color: #16a34a;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      border: 1px solid #c3e6cb;
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Fix para el scroll */
+    .shell {
+      height: 100vh;
+      overflow: hidden;
+    }
+    .content {
+      overflow-y: auto;
+      height: calc(100vh - 80px);
+      padding: 20px;
+    }
+    /* Asegurar que los resultados sean scrollables */
+    #resultadosBusqueda {
+      max-height: none;
+      overflow: visible;
+    }
+    .list {
+      max-height: none;
+    }
+    /* Estilos para aerolíneas en resultados */
+    .airline-logo {
+      width: 24px;
+      height: 24px;
+      border-radius: 3px;
+      object-fit: contain;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .airline-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .airline-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .flight-code {
+      color: #666;
+      font-size: 12px;
+      margin-left: auto;
+    }
+    /* Filtros adicionales */
+    .filters-container {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #e9ecef;
+    }
+    .filter-title {
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #333;
+    }
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .filter-option {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .filter-option input {
+      margin-right: 6px;
+    }
+    .filter-option label {
+      cursor: pointer;
+      font-size: 14px;
+    }
+    /* Badges para tipos de vuelo */
+    .badge.danger {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .badge.warning {
+      background: #fef3c7;
+      color: #d97706;
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-badge">✈</div>
+      <div>
+        <div class="brand-title">AirTickets</div>
+        <div class="brand-sub">Admin</div>
+      </div>
+    </div>
+  </header>
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="index.html" class=""><span class="icon">🏠</span><span>Inicio</span></a>
+      <a href="buscar.html" class="active"><span class="icon">✈️</span><span>Vuelos</span></a>
+      <a href="reservas.html" class=""><span class="icon">📖</span><span>Reservaciones</span></a>
+      <a href="aerolineas.html" class=""><span class="icon">🛩️</span><span>Aerolíneas</span></a>
+      <a href="estadisticas.html" class=""><span class="icon">📊</span><span>Estadísticas</span></a>
+      <a href="reclamos.html" class=""><span class="icon">💬</span><span>Reclamos</span></a>
+    </nav>
+  </aside>
+  <main class="content">
+
+    <div class="card">
+      <h3 class="section-title">Buscar vuelo</h3>
+
+      <!-- Mensaje de promoción cargada -->
+      <div id="promocionMessage" style="display: none;"></div>
+
+      <form id="searchFlightForm">
+        <div class="form-row">
+          <!-- Ciudad de Origen -->
+          <div>
+            <div class="label">Ciudad de origen</div>
+            <select class="input" id="origen" required>
+              <option value="">Seleccionar origen</option>
+              <option value="BOG">Bogotá (BOG)</option>
+              <option value="MDE">Medellín (MDE)</option>
+              <option value="CLO">Cali (CLO)</option>
+              <option value="BAQ">Barranquilla (BAQ)</option>
+              <option value="SAL">San Salvador (SAL)</option>
+              <option value="MIA">Miami (MIA)</option>
+              <option value="PTY">Panama City (PTY)</option>
+              <option value="LAS">Las Vegas (LAS)</option>
+              <option value="MAD">Madrid (MAD)</option>
+              <option value="LIM">Lima (LIM)</option>
+              <option value="MEX">Ciudad de México (MEX)</option>
+              <option value="CDG">París (CDG)</option>
+              <option value="JFK">Nueva York (JFK)</option>
+              <option value="CUN">Cancún (CUN)</option>
+              <option value="GDL">Guadalajara (GDL)</option>
+              <option value="TIJ">Tijuana (TIJ)</option>
+              <option value="MTY">Monterrey (MTY)</option>
+            </select>
+            <div class="error-message" id="origenError">Por favor selecciona una ciudad de origen</div>
+          </div>
+
+          <!-- Ciudad de Destino -->
+          <div>
+            <div class="label">Ciudad de destino</div>
+            <select class="input" id="destino" required>
+              <option value="">Seleccionar destino</option>
+              <option value="BOG">Bogotá (BOG)</option>
+              <option value="MDE">Medellín (MDE)</option>
+              <option value="CLO">Cali (CLO)</option>
+              <option value="BAQ">Barranquilla (BAQ)</option>
+              <option value="SAL">San Salvador (SAL)</option>
+              <option value="MIA">Miami (MIA)</option>
+              <option value="PTY">Panama City (PTY)</option>
+              <option value="LAS">Las Vegas (LAS)</option>
+              <option value="MAD">Madrid (MAD)</option>
+              <option value="LIM">Lima (LIM)</option>
+              <option value="MEX">Ciudad de México (MEX)</option>
+              <option value="CDG">París (CDG)</option>
+              <option value="JFK">Nueva York (JFK)</option>
+              <option value="CUN">Cancún (CUN)</option>
+              <option value="GDL">Guadalajara (GDL)</option>
+              <option value="TIJ">Tijuana (TIJ)</option>
+              <option value="MTY">Monterrey (MTY)</option>
+            </select>
+            <div class="error-message" id="destinoError">Por favor selecciona una ciudad de destino</div>
+            <div class="error-message" id="mismoDestinoError" style="display:none">El destino no puede ser igual al origen</div>
+          </div>
+
+          <!-- Fecha de Salida -->
+          <div>
+            <div class="label">Fecha de salida</div>
+            <input type="date" class="input" id="fechaSalida" required />
+            <div class="error-message" id="fechaError">Por favor selecciona una fecha válida</div>
+          </div>
+
+          <!-- Número de Pasajeros (hasta 5) -->
+          <div>
+            <div class="label">Número de pasajeros</div>
+            <select class="input" id="pasajeros" required>
+              <option value="">Seleccionar número</option>
+              <option value="1">1 Pasajero</option>
+              <option value="2">2 Pasajeros</option>
+              <option value="3">3 Pasajeros</option>
+              <option value="4">4 Pasajeros</option>
+              <option value="5">5 Pasajeros</option>
+            </select>
+            <div class="error-message" id="pasajerosError">Por favor selecciona el número de pasajeros</div>
+          </div>
+
+          <!-- Hora de Salida -->
+          <div>
+            <div class="label">Hora de salida</div>
+            <input type="time" class="input" id="horaSalida" value="00:00" required />
+            <div class="error-message" id="horaError">Por favor selecciona una hora válida</div>
+          </div>
+        </div>
+
+        <!-- Filtro de aerolíneas -->
+        <div class="filters-container">
+          <div class="filter-title">Filtrar por aerolínea</div>
+          <div class="filter-options" id="airlineFilters">
+            <!-- Las opciones se cargarán dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Mensaje de éxito -->
+        <div class="success-message" id="successMessage">
+          ✅ Búsqueda realizada correctamente
+        </div>
+
+        <div class="row" style="margin-top:16px">
+          <button type="submit" class="btn right" style="background:var(--brand, #0a63ff); color:white">
+            🔍 Buscar vuelos
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Resultados de búsqueda (inicialmente oculto) -->
+    <div id="resultadosBusqueda" style="display:none; margin-top:30px">
+      <div class="card">
+        <h3 class="section-title">Vuelos Disponibles</h3>
+        <div id="listaVuelos" class="list">
+          <!-- Los vuelos se cargarán aquí dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Espacio adicional para permitir scroll -->
+    <div style="height: 100px;"></div>
+
+  </main>
+</div>
+
+<script>
+  // Datos de aeropuertos desde tu base de datos
+  const aeropuertos = [
+    { code: 'BOG', city: 'Bogotá', country: 'Colombia' },
+    { code: 'MDE', city: 'Medellín', country: 'Colombia' },
+    { code: 'CLO', city: 'Cali', country: 'Colombia' },
+    { code: 'BAQ', city: 'Barranquilla', country: 'Colombia' },
+    { code: 'SAL', city: 'San Salvador', country: 'El Salvador' },
+    { code: 'MIA', city: 'Miami', country: 'USA' },
+    { code: 'PTY', city: 'Panama City', country: 'Panama' },
+    { code: 'LAS', city: 'Las Vegas', country: 'USA' },
+    { code: 'MAD', city: 'Madrid', country: 'España' },
+    { code: 'LIM', city: 'Lima', country: 'Perú' },
+    { code: 'MEX', city: 'Ciudad de México', country: 'México' },
+    { code: 'CDG', city: 'París', country: 'Francia' },
+    { code: 'JFK', city: 'Nueva York', country: 'USA' },
+    { code: 'CUN', city: 'Cancún', country: 'México' },
+    { code: 'GDL', city: 'Guadalajara', country: 'México' },
+    { code: 'TIJ', city: 'Tijuana', country: 'México' },
+    { code: 'MTY', city: 'Monterrey', country: 'México' }
+  ];
+
+  // Datos de aerolíneas con logos - SOLO LAS ESPECIFICADAS
+  const aerolineas = [
+    {
+      id: 'delta',
+      name: 'Delta Air',
+      logo: 'https://s7d1.scene7.com/is/image/LippincottDM/Delta_03?fmt=webp&qlt=100'
+    },
+    {
+      id: 'avianca',
+      name: 'Avianca',
+      logo: 'https://volavi.co/wp-content/uploads/2023/10/Nuevo-Logo_avianca-Octubre2023.jpg.webp'
+    },
+    {
+      id: 'latam',
+      name: 'LATAM',
+      logo: 'https://photos.prnewswire.com/prnfull/20160428/361126LOGO'
+    },
+    {
+      id: 'iberia',
+      name: 'Iberia',
+      logo: 'https://www.marcasrenombradas.com/wp-content/uploads/2011/08/Iberia.jpg'
+    },
+    {
+      id: 'american',
+      name: 'America Airlines',
+      logo: 'https://assets.simpleviewinc.com/simpleview/image/upload/c_fill,h_1600,q_75,w_2400/v1/crm/tampabay/aArtboard-2_A737B76A-0BA5-49DB-F9DED6318A7C739C-a737b673bde148e_a737c1d3-f5a4-fa12-33635b09ca5fb2dd.jpg'
+    },
+    {
+      id: 'qatar',
+      name: 'Qatar Air',
+      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD6OnNpaAsEqTYRCRYrG2qUB-ZPT9HzDiKBQ&s'
+    },
+    {
+      id: 'emirates',
+      name: 'Emirates Airways',
+      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMWa43g3R335BROGk-pdEjAWqU6W1J9KaGlg&s'
+    },
+    {
+      id: 'volaris',
+      name: 'Volaris',
+      logo: 'https://mir-s3-cdn-cf.behance.net/project_modules/fs_webp/6ce67d27128795.563602c83a3fc.jpg'
+    }
+  ];
+
+  // Generar vuelos disponibles para TODAS las combinaciones posibles
+  function generarVuelosDisponibles() {
+    const vuelos = [];
+    let idCounter = 1;
+
+    // Aerolíneas disponibles - SOLO LAS ESPECIFICADAS
+    const airlines = ['Delta Air', 'Avianca', 'LATAM', 'Iberia', 'America Airlines', 'Qatar Air', 'Emirates Airways', 'Volaris'];
+    const aircrafts = ['Boeing 737', 'Airbus A320', 'Boeing 787', 'Airbus A350', 'Embraer E190', 'Airbus A330'];
+
+    // Generar vuelos directos para todas las combinaciones posibles
+    aeropuertos.forEach(origen => {
+      aeropuertos.forEach(destino => {
+        if (origen.code !== destino.code) {
+          // Crear entre 1 y 3 vuelos por combinación
+          const numVuelos = Math.floor(Math.random() * 3) + 1;
+
+          for (let i = 0; i < numVuelos; i++) {
+            const airline = airlines[Math.floor(Math.random() * airlines.length)];
+            const airlineId = airline.toLowerCase().replace(' ', '-').replace('airlines', '').replace('airways', '').trim();
+            const aircraft = aircrafts[Math.floor(Math.random() * aircrafts.length)];
+
+            // Generar horarios realistas
+            const departureHour = Math.floor(Math.random() * 24).toString().padStart(2, '0');
+            const departureMinute = (Math.floor(Math.random() * 12) * 5).toString().padStart(2, '0');
+            const departureTime = `${departureHour}:${departureMinute}`;
+
+            // Calcular tiempo de vuelo basado en distancia aproximada
+            const flightHours = Math.max(1, Math.floor(Math.random() * 8) + 1);
+            const flightMinutes = Math.floor(Math.random() * 60);
+            const duration = `${flightHours}h ${flightMinutes.toString().padStart(2, '0')}m`;
+
+            // Calcular hora de llegada
+            const arrivalHour = (parseInt(departureHour) + flightHours) % 24;
+            const arrivalMinute = (parseInt(departureMinute) + flightMinutes) % 60;
+            const arrivalTime = `${arrivalHour.toString().padStart(2, '0')}:${arrivalMinute.toString().padStart(2, '0')}`;
+
+            // Precio base según distancia y aerolínea
+            const basePrice = Math.floor(Math.random() * 500000) + 150000;
+
+            vuelos.push({
+              id: idCounter++,
+              code: `${airline.substring(0, 2).toUpperCase()}-${Math.floor(Math.random() * 900) + 100}`,
+              airline: airline,
+              airlineId: airlineId,
+              aircraft: aircraft,
+              origin: origen.code,
+              destination: destino.code,
+              departureTime: departureTime,
+              arrivalTime: arrivalTime,
+              duration: duration,
+              price: basePrice,
+              availableSeats: Math.floor(Math.random() * 30) + 10,
+              baseFare: Math.floor(basePrice / 1000),
+              escala: false
+            });
+          }
+        }
+      });
+    });
+
+    return vuelos;
+  }
+
+  // Generar todos los vuelos disponibles
+  const vuelosDisponibles = generarVuelosDisponibles();
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('searchFlightForm');
+    const fechaInput = document.getElementById('fechaSalida');
+    const resultadosDiv = document.getElementById('resultadosBusqueda');
+    const listaVuelos = document.getElementById('listaVuelos');
+    const promocionMessage = document.getElementById('promocionMessage');
+    const airlineFiltersContainer = document.getElementById('airlineFilters');
+
+    // Cargar filtros de aerolíneas
+    function cargarFiltrosAerolineas() {
+      // Usar las aerolíneas especificadas
+      aerolineas.forEach(aerolinea => {
+        const filterOption = document.createElement('div');
+        filterOption.className = 'filter-option';
+        filterOption.innerHTML = `
+          <input type="checkbox" id="airline-${aerolinea.id}" name="airline" value="${aerolinea.id}" checked>
+          <label for="airline-${aerolinea.id}">${aerolinea.name}</label>
+        `;
+        airlineFiltersContainer.appendChild(filterOption);
+      });
+    }
+
+    // Cargar vuelo de promoción al iniciar la página
+    function cargarVueloPromocion() {
+      const vueloPromocion = sessionStorage.getItem('vueloPromocion');
+
+      if (vueloPromocion) {
+        const vuelo = JSON.parse(vueloPromocion);
+
+        // Llenar automáticamente los campos del formulario
+        document.getElementById('origen').value = vuelo.origen;
+        document.getElementById('destino').value = vuelo.destino;
+
+        // Formatear fecha para el input date (convertir de "29/11/2025" a "2025-11-29")
+        const [dia, mes, anio] = vuelo.fecha.split('/');
+        const fechaFormateada = `${anio}-${mes}-${dia}`;
+        document.getElementById('fechaSalida').value = fechaFormateada;
+
+        // Mostrar mensaje de confirmación
+        promocionMessage.style.display = 'block';
+        promocionMessage.className = 'alert-success';
+        promocionMessage.innerHTML = `
+          <strong>✓ Vuelo promocional cargado:</strong> ${vuelo.titulo} - ${vuelo.fecha} - ${vuelo.precio} USD
+        `;
+
+        // Limpiar el storage después de usar
+        sessionStorage.removeItem('vueloPromocion');
+      }
+    }
+
+    // Llamar la función para cargar promoción
+    cargarVueloPromocion();
+    cargarFiltrosAerolineas();
+
+    // Establecer fecha mínima como hoy
+    const today = new Date().toISOString().split('T')[0];
+    fechaInput.min = today;
+
+    // Validaciones del formulario
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Resetear errores
+      resetErrors();
+
+      let isValid = true;
+
+      // Validar origen
+      const origen = document.getElementById('origen');
+      if (!origen.value) {
+        showError('origenError', origen);
+        isValid = false;
+      }
+
+      // Validar destino
+      const destino = document.getElementById('destino');
+      if (!destino.value) {
+        showError('destinoError', destino);
+        isValid = false;
+      } else if (destino.value === origen.value) {
+        showError('mismoDestinoError', destino);
+        isValid = false;
+      }
+
+      // Validar fecha
+      const fecha = fechaInput.value;
+      if (!fecha) {
+        showError('fechaError', fechaInput);
+        isValid = false;
+      } else if (!isValidDate(fecha)) {
+        showError('fechaError', fechaInput);
+        isValid = false;
+      }
+
+      // Validar pasajeros
+      const pasajeros = document.getElementById('pasajeros');
+      if (!pasajeros.value) {
+        showError('pasajerosError', pasajeros);
+        isValid = false;
+      }
+
+      // Validar hora
+      const hora = document.getElementById('horaSalida').value;
+      if (!hora) {
+        showError('horaError', document.getElementById('horaSalida'));
+        isValid = false;
+      }
+
+      // Si todo es válido
+      if (isValid) {
+        document.getElementById('successMessage').style.display = 'block';
+
+        // Guardar datos en sessionStorage para usar en otras páginas
+        const datosBusqueda = {
+          origen: origen.value,
+          destino: destino.value,
+          fecha: fecha,
+          numPasajeros: parseInt(pasajeros.value),
+          hora: hora
+        };
+
+        sessionStorage.setItem('busqueda', JSON.stringify(datosBusqueda));
+
+        // Obtener aerolíneas seleccionadas
+        const aerolineasSeleccionadas = obtenerAerolineasSeleccionadas();
+
+        // Buscar vuelos que coincidan con la búsqueda
+        buscarVuelos(origen.value, destino.value, fecha, parseInt(pasajeros.value), aerolineasSeleccionadas);
+
+        // Ocultar mensaje después de 2 segundos
+        setTimeout(() => {
+          document.getElementById('successMessage').style.display = 'none';
+        }, 2000);
+      }
+    });
+
+    // Función para obtener aerolíneas seleccionadas
+    function obtenerAerolineasSeleccionadas() {
+      const checkboxes = document.querySelectorAll('input[name="airline"]:checked');
+      const seleccionadas = [];
+      checkboxes.forEach(checkbox => {
+        seleccionadas.push(checkbox.value);
+      });
+      return seleccionadas;
+    }
+
+    // Función para buscar vuelos
+    function buscarVuelos(origen, destino, fecha, pasajeros, aerolineasSeleccionadas) {
+      // Filtrar vuelos que coincidan con origen y destino
+      let vuelosFiltrados = vuelosDisponibles.filter(vuelo =>
+        vuelo.origin === origen && vuelo.destination === destino
+      );
+
+      // Filtrar por aerolíneas seleccionadas
+      if (aerolineasSeleccionadas.length > 0) {
+        vuelosFiltrados = vuelosFiltrados.filter(vuelo =>
+          aerolineasSeleccionadas.includes(vuelo.airlineId)
+        );
+      }
+
+      // Si no hay vuelos directos, buscar vuelos con escala
+      if (vuelosFiltrados.length === 0) {
+        vuelosFiltrados = buscarVuelosConEscala(origen, destino, aerolineasSeleccionadas);
+      }
+
+      // Mostrar resultados
+      mostrarResultados(vuelosFiltrados, pasajeros);
+    }
+
+    // Función para buscar vuelos con escala
+    function buscarVuelosConEscala(origen, destino, aerolineasSeleccionadas) {
+      const vuelosConEscala = [];
+
+      // Buscar primera parte del vuelo (origen -> conexión)
+      const primeraParte = vuelosDisponibles.filter(vuelo => vuelo.origin === origen);
+
+      // Para cada vuelo de primera parte, buscar segunda parte (conexión -> destino)
+      primeraParte.forEach(primerVuelo => {
+        const segundaParte = vuelosDisponibles.find(vuelo =>
+          vuelo.origin === primerVuelo.destination && vuelo.destination === destino
+        );
+
+        if (segundaParte) {
+          // Aplicar filtro de aerolíneas si es necesario
+          if (aerolineasSeleccionadas.length > 0) {
+            if (!aerolineasSeleccionadas.includes(primerVuelo.airlineId) ||
+                !aerolineasSeleccionadas.includes(segundaParte.airlineId)) {
+              return; // Saltar esta combinación si no cumple con los filtros
+            }
+          }
+
+          // Crear un vuelo combinado
+          const vueloCombinado = {
+            id: `combinado-${primerVuelo.id}-${segundaParte.id}`,
+            code: `${primerVuelo.code} + ${segundaParte.code}`,
+            airline: `${primerVuelo.airline} + ${segundaParte.airline}`,
+            airlineId: 'combinado',
+            aircraft: `${primerVuelo.aircraft} / ${segundaParte.aircraft}`,
+            origin: origen,
+            destination: destino,
+            departureTime: primerVuelo.departureTime,
+            arrivalTime: segundaParte.arrivalTime,
+            duration: calcularDuracionCombinada(primerVuelo.duration, segundaParte.duration),
+            price: Math.round((primerVuelo.price + segundaParte.price) * 0.9), // 10% de descuento por ser combinado
+            availableSeats: Math.min(primerVuelo.availableSeats, segundaParte.availableSeats),
+            baseFare: primerVuelo.baseFare + segundaParte.baseFare,
+            escala: true,
+            conexion: primerVuelo.destination
+          };
+
+          vuelosConEscala.push(vueloCombinado);
+        }
+      });
+
+      return vuelosConEscala;
+    }
+
+    // Función para calcular duración combinada
+    function calcularDuracionCombinada(duracion1, duracion2) {
+      // Extraer horas y minutos de cada duración
+      const regex = /(\d+)h\s*(\d+)m/;
+      const match1 = duracion1.match(regex);
+      const match2 = duracion2.match(regex);
+
+      let horas = 0;
+      let minutos = 0;
+
+      if (match1) {
+        horas += parseInt(match1[1]);
+        minutos += parseInt(match1[2]);
+      }
+
+      if (match2) {
+        horas += parseInt(match2[1]);
+        minutos += parseInt(match2[2]);
+      }
+
+      // Añadir 2 horas para la escala
+      horas += 2;
+
+      // Ajustar horas y minutos
+      horas += Math.floor(minutos / 60);
+      minutos = minutos % 60;
+
+      return `${horas}h ${minutos}m`;
+    }
+
+    // Función para mostrar resultados
+    function mostrarResultados(vuelos, pasajeros) {
+     sessionStorage.setItem('vueloSeleccionado', JSON.stringify(vuelos));
+    console.log('Vuelos guardados en sessionStorage:', vuelos);
+    // GUARDAR los vuelos en sessionStorage para que pasajero.html los pueda usar
+    sessionStorage.setItem('vueloSeleccionado', JSON.stringify(vuelos));
+      listaVuelos.innerHTML = '';
+
+      if (vuelos.length === 0) {
+        listaVuelos.innerHTML = `
+          <div class="item" style="text-align:center; padding:40px">
+            <div style="font-size:48px">✈️</div>
+            <h3>No se encontraron vuelos</h3>
+            <p class="muted">Intenta ajustar tus filtros de búsqueda</p>
+            <button class="btn" onclick="resetFilters()">Mostrar todas las aerolíneas</button>
+          </div>
+        `;
+      } else {
+        // Ordenar vuelos por precio (más barato primero)
+        vuelos.sort((a, b) => a.price - b.price);
+
+        vuelos.forEach(vuelo => {
+          const origenInfo = aeropuertos.find(a => a.code === vuelo.origin);
+          const destinoInfo = aeropuertos.find(a => a.code === vuelo.destination);
+          const aerolineaInfo = aerolineas.find(a => a.id === vuelo.airlineId);
+
+          const vueloElement = document.createElement('div');
+          vueloElement.className = 'item row';
+
+          let airlineLogo = '';
+          if (aerolineaInfo && aerolineaInfo.logo) {
+            airlineLogo = `<img src="${aerolineaInfo.logo}" alt="${vuelo.airline}" class="airline-logo">`;
+          } else if (vuelo.airlineId === 'combinado') {
+            airlineLogo = `<div class="airline-logo" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-size:12px;">✈️+✈️</div>`;
+          }
+
+          let escalaInfo = '';
+          if (vuelo.escala) {
+            const conexionInfo = aeropuertos.find(a => a.code === vuelo.conexion);
+            escalaInfo = `<div class="muted" style="margin-top: 5px; font-size: 12px;">✈️ Escala en ${conexionInfo.city} (${vuelo.conexion})</div>`;
+          }
+
+          vueloElement.innerHTML = `
+            <div class="space-y" style="min-width:260px">
+              <div class="airline-info">
+                ${airlineLogo}
+                <span class="airline-name">${vuelo.airline}</span>
+                <span class="flight-code">${vuelo.code}</span>
+              </div>
+              <div class="row" style="gap:18px">
+                <div>
+                  <div><b>${vuelo.departureTime}</b></div>
+                  <div class="muted">${origenInfo.city} (${origenInfo.code})</div>
+                </div>
+                <div class="muted">⏱ ${vuelo.duration}</div>
+                <div>
+                  <div><b>${vuelo.arrivalTime}</b></div>
+                  <div class="muted">${destinoInfo.city} (${destinoInfo.code})</div>
+                </div>
+              </div>
+              ${escalaInfo}
+              <div class="muted" style="font-size: 12px; margin-top: 5px;">${vuelo.aircraft}</div>
+            </div>
+            <div class="right" style="text-align:right">
+              <div style="font-weight:800;font-size:22px">$${vuelo.price.toLocaleString()}</div>
+              <div class="badge ${vuelo.availableSeats > 10 ? 'ok' : vuelo.availableSeats > 5 ? 'warning' : 'danger'}">
+                ${vuelo.availableSeats} asientos disponibles
+              </div>
+              ${vuelo.escala ? '<div class="badge gray" style="margin-top: 5px;">Vuelo con escala</div>' : '<div class="badge ok" style="margin-top: 5px;">Vuelo directo</div>'}
+            </div>
+            <div class="right">
+              <a class="btn" href="pasajero.html?flight=${vuelo.id}&passengers=${pasajeros}">
+                Seleccionar
+              </a>
+            </div>
+          `;
+          listaVuelos.appendChild(vueloElement);
+        });
+      }
+
+      // Mostrar sección de resultados
+      resultadosDiv.style.display = 'block';
+
+      // Scroll suave a los resultados
+      setTimeout(() => {
+        resultadosDiv.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+
+    // Funciones de ayuda
+    function resetErrors() {
+      document.querySelectorAll('.error-message').forEach(error => {
+        error.style.display = 'none';
+      });
+      document.querySelectorAll('.input-error').forEach(input => {
+        input.classList.remove('input-error');
+      });
+      document.getElementById('successMessage').style.display = 'none';
+    }
+
+    function showError(errorId, inputElement) {
+      document.getElementById(errorId).style.display = 'block';
+      inputElement.classList.add('input-error');
+    }
+
+    function isValidDate(dateString) {
+      const selectedDate = new Date(dateString);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return selectedDate >= today;
+    }
+
+    // Validación en tiempo real para origen y destino diferentes
+    document.getElementById('origen').addEventListener('change', validateDifferentCities);
+    document.getElementById('destino').addEventListener('change', validateDifferentCities);
+
+    function validateDifferentCities() {
+      const origen = document.getElementById('origen').value;
+      const destino = document.getElementById('destino').value;
+
+      if (origen && destino && origen === destino) {
+        showError('mismoDestinoError', document.getElementById('destino'));
+      } else {
+        document.getElementById('mismoDestinoError').style.display = 'none';
+        document.getElementById('destino').classList.remove('input-error');
+      }
+    }
+
+    // Validación en tiempo real para otros campos
+    [fechaInput, document.getElementById('horaSalida')].forEach(input => {
+      input.addEventListener('change', function() {
+        if (this.value) {
+          this.classList.remove('input-error');
+          const errorId = this.id === 'fechaSalida' ? 'fechaError' : 'horaError';
+          document.getElementById(errorId).style.display = 'none';
+        }
+      });
+    });
+
+    // Validación para selects
+    document.querySelectorAll('select').forEach(select => {
+      select.addEventListener('change', function() {
+        if (this.value) {
+          this.classList.remove('input-error');
+          const errorId = this.id + 'Error';
+          document.getElementById(errorId).style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Función global para resetear filtros
+  function resetFilters() {
+    const checkboxes = document.querySelectorAll('input[name="airline"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = true;
+    });
+
+    // Reenviar el formulario
+    document.getElementById('searchFlightForm').dispatchEvent(new Event('submit'));
+  }
+  // En la función mostrarResultados del archivo buscar.html, actualicé la parte donde se generan los enlaces:
+vueloElement.innerHTML = `
+  <div class="space-y" style="min-width:260px">
+    <div class="airline-info">
+      ${airlineLogo}
+      <span class="airline-name">${vuelo.airline}</span>
+      <span class="flight-code">${vuelo.code}</span>
+    </div>
+    <div class="row" style="gap:18px">
+      <div>
+        <div><b>${vuelo.departureTime}</b></div>
+        <div class="muted">${origenInfo.city} (${origenInfo.code})</div>
+      </div>
+      <div class="muted">⏱ ${vuelo.duration}</div>
+      <div>
+        <div><b>${vuelo.arrivalTime}</b></div>
+        <div class="muted">${destinoInfo.city} (${destinoInfo.code})</div>
+      </div>
+    </div>
+    ${escalaInfo}
+    <div class="muted" style="font-size: 12px; margin-top: 5px;">${vuelo.aircraft}</div>
+  </div>
+  <div class="right" style="text-align:right">
+    <div style="font-weight:800;font-size:22px">$${vuelo.price.toLocaleString()}</div>
+    <div class="badge ${vuelo.availableSeats > 10 ? 'ok' : vuelo.availableSeats > 5 ? 'warning' : 'danger'}">
+      ${vuelo.availableSeats} asientos disponibles
+    </div>
+    ${vuelo.escala ? '<div class="badge gray" style="margin-top: 5px;">Vuelo con escala</div>' : '<div class="badge ok" style="margin-top: 5px;">Vuelo directo</div>'}
+  </div>
+  <div class="right">
+    <a class="btn" href="pasajero.html?flight=${vuelo.id}&passengers=${pasajeros}">
+      Seleccionar
+    </a>
+  </div>
+`;
+// En confirmacion.html, después de mostrar la confirmación
+setTimeout(() => {
+    window.location.href = 'reservas.html';
+}, 5000); // Redirigir después de 5 segundos
+</script>
+</body>
+</html>

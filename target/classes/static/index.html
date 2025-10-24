@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AirTickets</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <script>
+    (function(){ if (!localStorage.getItem("auth_token")) location.replace("/login.html"); })();
+  </script>
+
+</head>
+<style>
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    position: relative;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+
+  .card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+
+  .card-content {
+    padding: 15px;
+  }
+
+  .card h3 {
+    font-size: 18px;
+    margin: 10px 0 5px;
+    color: #333;
+  }
+
+  .card p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+  }
+
+  .price {
+    color: #8e24aa;
+    font-weight: bold;
+    font-size: 20px;
+    margin-top: 5px;
+  }
+
+  .btn-reserva {
+    display: block;
+    background: #8e24aa;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    margin: 15px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+
+  .btn-reserva:hover {
+    background: #6a1b9a;
+  }
+
+  .promo-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff4444;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .tipo-vuelo {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+  }
+
+  /* Estilos para hacer el contenido desplazable */
+  .content {
+    overflow-y: auto;
+    height: calc(100vh - 60px);
+  }
+
+  /* Ajustes para pantallas más pequeñas */
+  @media (max-width: 1200px) {
+    .grid-4 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .grid-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+<body>
+<div class="shell">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-badge">✈</div>
+      <div>
+        <div class="brand-title">AirTickets</div>
+        <div class="brand-sub">Admin</div>
+      </div>
+    </div>
+  </header>
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="index.html" class="active"><span class="icon">🏠</span><span>Inicio</span></a>
+      <a href="buscar.html" class=""><span class="icon">✈️</span><span>Vuelos</span></a>
+      <a href="reservas.html" class=""><span class="icon">📖</span><span>Reservaciones</span></a>
+      <a href="aerolineas.html" class=""><span class="icon">🛩️</span><span>Aerolíneas</span></a>
+      <a href="estadisticas.html" class=""><span class="icon">📊</span><span>Estadísticas</span></a>
+      <a href="reclamos.html" class=""><span class="icon">💬</span><span>Reclamos</span></a>
+    </nav>
+  </aside>
+  <main class="content">
+
+    <h2 class="section-title">🔥 Ofertas Especiales de Hoy</h2>
+    <div class="grid-4">
+
+      <!-- Promoción 1: Bogotá a Miami -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1514214246283-d427a95c5d2f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Miami">
+        <div class="card-content">
+          <h3>Bogotá (BOG) a Miami (MIA)</h3>
+          <p>Disponible hasta: 30/12/2025</p>
+          <p class="tipo-vuelo">Ida y vuelta, Clase Económica</p>
+          <p class="price">Desde USD 373</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="BOG" data-destino="MIA">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 2: Medellín a Madrid -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1543785734-4b6e564642f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Madrid">
+        <div class="card-content">
+          <h3>Medellín (MDE) a Madrid (MAD)</h3>
+          <p>Disponible hasta: 15/01/2026</p>
+          <p class="tipo-vuelo">Ida y vuelta, Clase Económica</p>
+          <p class="price">Desde USD 938</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="MDE" data-destino="MAD">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 3: Cali a Nueva York -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1517935706615-2717063c2225?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Nueva York">
+        <div class="card-content">
+          <h3>Cali (CLO) a Nueva York (JFK)</h3>
+          <p>Disponible hasta: 20/01/2026</p>
+          <p class="tipo-vuelo">Ida y vuelta, Clase Económica</p>
+          <p class="price">Desde USD 522</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="CLO" data-destino="JFK">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 4: Barranquilla a París -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="París">
+        <div class="card-content">
+          <h3>Barranquilla (BAQ) a París (CDG)</h3>
+          <p>Disponible hasta: 25/01/2026</p>
+          <p class="tipo-vuelo">Ida y vuelta, Clase Económica</p>
+          <p class="price">Desde USD 918</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="BAQ" data-destino="CDG">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 5: San Salvador a Las Vegas -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Las Vegas">
+        <div class="card-content">
+          <h3>San Salvador (SAL) a Las Vegas (LAS)</h3>
+          <p>Disponible hasta: 18/01/2026</p>
+          <p class="tipo-vuelo">Ida y vuelta, Clase Económica</p>
+          <p class="price">Desde USD 452</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="SAL" data-destino="LAS">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 6: Miami a San Salvador -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="San Salvador">
+        <div class="card-content">
+          <h3>Miami (MIA) a San Salvador (SAL)</h3>
+          <p>Disponible hasta: 22/12/2025</p>
+          <p class="tipo-vuelo">Ida y vuelta, Clase Económica</p>
+          <p class="price">Desde USD 544</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="MIA" data-destino="SAL">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 7: Panama City a Madrid -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1543785734-4b6e564642f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Madrid">
+        <div class="card-content">
+          <h3>Panama City (PTY) a Madrid (MAD)</h3>
+          <p>Disponible hasta: 28/01/2026</p>
+          <p class="tipo-vuelo">Ida y vuelta, Clase Económica</p>
+          <p class="price">Desde USD 899</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="PTY" data-destino="MAD">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 8: Las Vegas a Lima -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1580502304784-8985b7eb7260?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Lima">
+        <div class="card-content">
+          <h3>Las Vegas (LAS) a Lima (LIM)</h3>
+          <p>Disponible hasta: 14/01/2026</p>
+          <p class="tipo-vuelo">Ida y vuelta, Clase Económica</p>
+          <p class="price">Desde USD 689</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="LAS" data-destino="LIM">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 9: Ciudad de México a Cancún -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://www.palaceresorts.com/aerial-view-cancun-palace-resorts_1f4e0ab4cb.webp" alt="Cancún">
+        <div class="card-content">
+          <h3>Ciudad de México (MEX) a Cancún (CUN)</h3>
+          <p>Disponible hasta: 25/12/2025</p>
+          <p class="tipo-vuelo">Por trayecto, Clase Económica</p>
+          <p class="price">Desde USD 160</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="MEX" data-destino="CUN">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 10: Guadalajara a Miami -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1515896769750-31548aa180ed?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Miami">
+        <div class="card-content">
+          <h3>Guadalajara (GDL) a Miami (MIA)</h3>
+          <p>Disponible hasta: 20/12/2025</p>
+          <p class="tipo-vuelo">Por trayecto, Clase Económica</p>
+          <p class="price">Desde USD 161</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="GDL" data-destino="MIA">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 11: Tijuana a Las Vegas -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Las Vegas">
+        <div class="card-content">
+          <h3>Tijuana (TIJ) a Las Vegas (LAS)</h3>
+          <p>Disponible hasta: 18/12/2025</p>
+          <p class="tipo-vuelo">Por trayecto, Clase Económica</p>
+          <p class="price">Desde USD 202</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="TIJ" data-destino="LAS">Reserva ahora</a>
+      </div>
+
+      <!-- Promoción 12: Monterrey a Nueva York -->
+      <div class="card">
+        <div class="promo-badge">OFERTA</div>
+        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Nueva York">
+        <div class="card-content">
+          <h3>Monterrey (MTY) a Nueva York (JFK)</h3>
+          <p>Disponible hasta: 22/12/2025</p>
+          <p class="tipo-vuelo">Por trayecto, Clase Económica</p>
+          <p class="price">Desde USD 238</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="MTY" data-destino="JFK">Reserva ahora</a>
+      </div>
+
+    </div>
+
+    <h2 class="section-title" style="margin-top: 40px;">✈️ Vuelos Nacionales en Oferta</h2>
+    <div class="grid-4">
+
+      <!-- Vuelo Nacional 1: Bogotá a Medellín -->
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Medellín">
+        <div class="card-content">
+          <h3>Bogotá (BOG) a Medellín (MDE)</h3>
+          <p>Disponible todo el año</p>
+          <p class="tipo-vuelo">Por trayecto, Clase Económica</p>
+          <p class="price">Desde USD 85</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="BOG" data-destino="MDE">Reserva ahora</a>
+      </div>
+
+     <!-- Vuelo Nacional 2: Medellín a Cali -->
+      <div class="card">
+        <img src="https://propacifico.org/wp-content/uploads/2024/02/adobestock-284418692-scaled.jpeg" alt="Cali">
+        <div class="card-content">
+          <h3>Medellín (MDE) a Cali (CLO)</h3>
+          <p>Disponible todo el año</p>
+          <p class="tipo-vuelo">Por trayecto, Clase Económica</p>
+          <p class="price">Desde USD 92</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="MDE" data-destino="CLO">Reserva ahora</a>
+      </div>
+
+      <!-- Vuelo Nacional 3: Cali a Barranquilla -->
+      <div class="card">
+        <img src="https://ul.edu.co/uleduco/cache/mod_roksprocket/488cd8edefde50940f7cbae84cefa34f_350_500.jpg" alt="Barranquilla">
+        <div class="card-content">
+          <h3>Cali (CLO) a Barranquilla (BAQ)</h3>
+          <p>Disponible todo el año</p>
+          <p class="tipo-vuelo">Por trayecto, Clase Económica</p>
+          <p class="price">Desde USD 110</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="CLO" data-destino="BAQ">Reserva ahora</a>
+      </div>
+
+      <!-- Vuelo Nacional 4: Barranquilla a Bogotá -->
+      <div class="card">
+        <img src="https://colombia-travels.com/wp-content/uploads/adobestock-266299444-1-1280x800.jpeg" alt="Bogotá">
+        <div class="card-content">
+          <h3>Barranquilla (BAQ) a Bogotá (BOG)</h3>
+          <p>Disponible todo el año</p>
+          <p class="tipo-vuelo">Por trayecto, Clase Económica</p>
+          <p class="price">Desde USD 95</p>
+        </div>
+        <a href="buscar.html" class="btn-reserva" data-origen="BAQ" data-destino="BOG">Reserva ahora</a>
+      </div>
+
+    </div>
+
+
+
+    <div class="row" style="margin-top:18px; margin-bottom: 20px;">
+      <a class="right link" href="buscar.html">Ver más vuelos →</a>
+    </div>
+  </main>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Agregar evento a todos los botones de "Reserva ahora"
+    const botonesReserva = document.querySelectorAll('.btn-reserva');
+
+    botonesReserva.forEach(boton => {
+      boton.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        // Obtener la información del vuelo desde los datos del botón
+        const origen = this.getAttribute('data-origen');
+        const destino = this.getAttribute('data-destino');
+        const card = this.closest('.card');
+        const titulo = card.querySelector('h3').textContent;
+        const fecha = card.querySelector('p').textContent;
+        const precio = card.querySelector('.price').textContent;
+
+        // Crear objeto con datos del vuelo promocional
+        const vueloPromocion = {
+          origen: origen,
+          destino: destino,
+          fecha: fecha.replace('Disponible hasta: ', ''),
+          precio: precio.replace('Desde USD ', ''),
+          titulo: titulo
+        };
+
+        // Guardar en sessionStorage
+        sessionStorage.setItem('vueloPromocion', JSON.stringify(vueloPromocion));
+
+        // Redirigir a buscar.html
+        window.location.href = 'buscar.html';
+      });
+    });
+
+    // Generar fechas realistas para las promociones
+    function generarFechasPromocion() {
+      const hoy = new Date();
+      const cards = document.querySelectorAll('.card');
+      
+      cards.forEach(card => {
+        const fechaElement = card.querySelector('p');
+        if (fechaElement && fechaElement.textContent.includes('Disponible hasta:')) {
+          const diasAleatorios = Math.floor(Math.random() * 60) + 15; // Entre 15 y 75 días
+          const fechaLimite = new Date(hoy);
+          fechaLimite.setDate(hoy.getDate() + diasAleatorios);
+          
+          const dia = fechaLimite.getDate().toString().padStart(2, '0');
+          const mes = (fechaLimite.getMonth() + 1).toString().padStart(2, '0');
+          const anio = fechaLimite.getFullYear();
+          
+          fechaElement.textContent = `Disponible hasta: ${dia}/${mes}/${anio}`;
+        }
+      });
+    }
+
+    // Llamar la función para generar fechas
+    generarFechasPromocion();
+  });
+</script>
+</body>
+</html>

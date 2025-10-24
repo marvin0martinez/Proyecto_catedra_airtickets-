@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: airtickets
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/airtickets?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/El_Salvador
+    username: root
+    password: ""   # <-- pon tu pass si no es vacío
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none               # NO toques el esquema existente
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
+
+app:
+  jwt:
+    secret: ChangeThis32CharsSecretKey_ChangeThis32
+    expiration-ms: 86400000
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html

@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AirTickets</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<style>
+  .ghost {
+    height: 90px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f4f4f4;
+    border-radius: 10px;
+  }
+
+  .ghost img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .space-y {
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+
+  .airline-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .airline-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .airline-info {
+    margin-top: 10px;
+    text-align: left;
+  }
+
+  .airline-name {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  .airline-details {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .countries-list {
+    font-size: 11px;
+    color: #888;
+    max-height: 60px;
+    overflow-y: auto;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+  }
+
+  .country-item {
+    margin-bottom: 2px;
+  }
+
+  .escala-info {
+    font-size: 10px;
+    color: #ff6b35;
+    font-weight: bold;
+    margin-top: 5px;
+  }
+
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+
+  @media (max-width: 1200px) {
+    .grid-4 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .grid-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+<body>
+<div class="shell">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-badge">✈</div>
+      <div>
+        <div class="brand-title">AirTickets</div>
+        <div class="brand-sub">Admin</div>
+      </div>
+    </div>
+  </header>
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="index.html" class=""><span class="icon">🏠</span><span>Inicio</span></a>
+      <a href="buscar.html" class=""><span class="icon">✈️</span><span>Vuelos</span></a>
+      <a href="reservas.html" class=""><span class="icon">📖</span><span>Reservaciones</span></a>
+      <a href="aerolineas.html" class="active"><span class="icon">🛩️</span><span>Aerolíneas</span></a>
+      <a href="estadisticas.html" class=""><span class="icon">📊</span><span>Estadísticas</span></a>
+      <a href="reclamos.html" class=""><span class="icon">💬</span><span>Reclamos</span></a>
+    </nav>
+  </aside>
+  <main class="content">
+
+    <div class="grid-4">
+
+      <!-- Delta Air -->
+      <div class="airline-card">
+        <div class="ghost">
+          <img src="https://s7d1.scene7.com/is/image/LippincottDM/Delta_03?fmt=webp&qlt=100" alt="Delta Air">
+        </div>
+        <div class="airline-info">
+          <div class="airline-name">Delta Air</div>
+          <div class="airline-details">✈️ Aerolínea estadounidense<br>⭐ 4.2/5 - Excelente servicio</div>
+          <div class="countries-list">
+            <div class="country-item">🇺🇸 Estados Unidos</div>
+            <div class="country-item">🇨🇴 Colombia</div>
+            <div class="country-item">🇲🇽 México</div>
+            <div class="country-item">🇪🇸 España</div>
+            <div class="country-item">🇫🇷 Francia</div>
+          </div>
+          <div class="escala-info">🔄 Escalas en Atlanta/Miami</div>
+        </div>
+      </div>
+
+      <!-- Avianca -->
+      <div class="airline-card">
+        <div class="ghost">
+          <img src="https://volavi.co/wp-content/uploads/2023/10/Nuevo-Logo_avianca-Octubre2023.jpg.webp" alt="Avianca">
+        </div>
+        <div class="airline-info">
+          <div class="airline-name">Avianca</div>
+          <div class="airline-details">✈️ Aerolínea colombiana<br>⭐ 4.0/5 - Buena puntualidad</div>
+          <div class="countries-list">
+            <div class="country-item">🇨🇴 Colombia</div>
+            <div class="country-item">🇺🇸 Estados Unidos</div>
+            <div class="country-item">🇪🇸 España</div>
+            <div class="country-item">🇵🇪 Perú</div>
+            <div class="country-item">🇨🇷 Costa Rica</div>
+            <div class="country-item">🇸🇻 El Salvador</div>
+          </div>
+          <div class="escala-info">✈️ Vuelos directos desde Bogotá</div>
+        </div>
+      </div>
+
+      <!-- LATAM -->
+      <div class="airline-card">
+        <div class="ghost">
+          <img src="https://photos.prnewswire.com/prnfull/20160428/361126LOGO" alt="LATAM">
+        </div>
+        <div class="airline-info">
+          <div class="airline-name">LATAM</div>
+          <div class="airline-details">✈️ Aerolínea sudamericana<br>⭐ 4.1/5 - Amplia red</div>
+          <div class="countries-list">
+            <div class="country-item">🇧🇷 Brasil</div>
+            <div class="country-item">🇨🇱 Chile</div>
+            <div class="country-item">🇵🇪 Perú</div>
+            <div class="country-item">🇨🇴 Colombia</div>
+            <div class="country-item">🇺🇸 Estados Unidos</div>
+            <div class="country-item">🇪🇸 España</div>
+          </div>
+          <div class="escala-info">🔄 Conexiones en Lima/Santiago</div>
+        </div>
+      </div>
+
+      <!-- Iberia -->
+      <div class="airline-card">
+        <div class="ghost">
+          <img src="https://www.marcasrenombradas.com/wp-content/uploads/2011/08/Iberia.jpg" alt="Iberia">
+        </div>
+        <div class="airline-info">
+          <div class="airline-name">Iberia</div>
+          <div class="airline-details">✈️ Aerolínea española<br>⭐ 4.3/5 - Líder en Europa</div>
+          <div class="countries-list">
+            <div class="country-item">🇪🇸 España</div>
+            <div class="country-item">🇨🇴 Colombia</div>
+            <div class="country-item">🇲🇽 México</div>
+            <div class="country-item">🇺🇸 Estados Unidos</div>
+            <div class="country-item">🇦🇷 Argentina</div>
+            <div class="country-item">🇫🇷 Francia</div>
+          </div>
+          <div class="escala-info">✈️ Hub principal: Madrid Barajas</div>
+        </div>
+      </div>
+
+      <!-- America Airlines -->
+      <div class="airline-card">
+        <div class="ghost">
+          <img src="https://assets.simpleviewinc.com/simpleview/image/upload/c_fill,h_1600,q_75,w_2400/v1/crm/tampabay/aArtboard-2_A737B76A-0BA5-49DB-F9DED6318A7C739C-a737b673bde148e_a737c1d3-f5a4-fa12-33635b09ca5fb2dd.jpg" alt="America Airlines">
+        </div>
+        <div class="airline-info">
+          <div class="airline-name">America Airlines</div>
+          <div class="airline-details">✈️ Aerolínea estadounidense<br>⭐ 3.9/5 - Amplia cobertura USA</div>
+          <div class="countries-list">
+            <div class="country-item">🇺🇸 Estados Unidos</div>
+            <div class="country-item">🇲🇽 México</div>
+            <div class="country-item">🇨🇴 Colombia</div>
+            <div class="country-item">🇧🇷 Brasil</div>
+            <div class="country-item">🇨🇷 Costa Rica</div>
+          </div>
+          <div class="escala-info">🔄 Escalas en Dallas/Miami</div>
+        </div>
+      </div>
+
+      <!-- Qatar Air -->
+      <div class="airline-card">
+        <div class="ghost">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD6OnNpaAsEqTYRCRYrG2qUB-ZPT9HzDiKBQ&s" alt="Qatar Air">
+        </div>
+        <div class="airline-info">
+          <div class="airline-name">Qatar Air</div>
+          <div class="airline-details">✈️ Aerolínea de Qatar<br>⭐ 4.7/5 - Lujo 5 estrellas</div>
+          <div class="countries-list">
+            <div class="country-item">🇶🇦 Qatar</div>
+            <div class="country-item">🇺🇸 Estados Unidos</div>
+            <div class="country-item">🇪🇸 España</div>
+            <div class="country-item">🇫🇷 Francia</div>
+            <div class="country-item">🇬🇧 Reino Unido</div>
+            <div class="country-item">🇦🇪 Emiratos Árabes</div>
+          </div>
+          <div class="escala-info">🔄 Hub mundial: Doha Hamad</div>
+        </div>
+      </div>
+
+      <!-- Emirates Airways -->
+      <div class="airline-card">
+        <div class="ghost">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMWa43g3R335BROGk-pdEjAWqU6W1J9KaGlg&s" alt="Emirates Airways">
+        </div>
+        <div class="airline-info">
+          <div class="airline-name">Emirates Airways</div>
+          <div class="airline-details">✈️ Aerolínea de Emiratos<br>⭐ 4.8/5 - Servicio premium</div>
+          <div class="countries-list">
+            <div class="country-item">🇦🇪 Emiratos Árabes</div>
+            <div class="country-item">🇺🇸 Estados Unidos</div>
+            <div class="country-item">🇪🇸 España</div>
+            <div class="country-item">🇫🇷 Francia</div>
+            <div class="country-item">🇬🇧 Reino Unido</div>
+            <div class="country-item">🇦🇺 Australia</div>
+          </div>
+          <div class="escala-info">🔄 Conexiones en Dubai</div>
+        </div>
+      </div>
+
+      <!-- Volaris -->
+      <div class="airline-card">
+        <div class="ghost">
+          <img src="https://mir-s3-cdn-cf.behance.net/project_modules/fs_webp/6ce67d27128795.563602c83a3fc.jpg" alt="Volaris">
+        </div>
+        <div class="airline-info">
+          <div class="airline-name">Volaris</div>
+          <div class="airline-details">✈️ Aerolínea mexicana low-cost<br>⭐ 3.7/5 - Precios económicos</div>
+          <div class="countries-list">
+            <div class="country-item">🇲🇽 México</div>
+            <div class="country-item">🇺🇸 Estados Unidos</div>
+            <div class="country-item">🇨🇴 Colombia</div>
+            <div class="country-item">🇸🇻 El Salvador</div>
+            <div class="country-item">🇨🇷 Costa Rica</div>
+          </div>
+          <div class="escala-info">✈️ Vuelos directos limitados</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row" style="margin-top:24px; padding: 0 20px;">
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
+        <span class="badge gray">📊 Estadísticas de Aerolíneas</span>
+        <div style="margin-top: 15px; font-size: 14px; color: #666;">
+          <div><strong>Resumen de cobertura:</strong></div>
+          <div>• 8 aerolíneas internacionales</div>
+          <div>• +15 países cubiertos</div>
+          <div>• Mejor calificación: Emirates Airways (4.8/5)</div>
+          <div>• Aerolínea con más destinos: Avianca</div>
+          <div>• Low-cost recomendada: Volaris</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

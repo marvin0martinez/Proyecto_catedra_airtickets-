@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AirTickets</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    html,body{height:auto}</style>
+</head>
+<body>
+<div class="shell">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-badge">✈</div>
+      <div>
+        <div class="brand-title">AirTickets</div>
+        <div class="brand-sub">Admin</div>
+      </div>
+    </div>
+  </header>
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="index.html" class=""><span class="icon">🏠</span><span>Inicio</span></a>
+      <a href="buscar.html" class=""><span class="icon">✈️</span><span>Vuelos</span></a>
+      <a href="reservas.html" class=""><span class="icon">📖</span><span>Reservaciones</span></a>
+      <a href="aerolineas.html" class=""><span class="icon">🛩️</span><span>Aerolíneas</span></a>
+      <a href="estadisticas.html" class=""><span class="icon">📊</span><span>Estadísticas</span></a>
+      <a href="reclamos.html" class="active"><span class="icon">💬</span><span>Reclamos</span></a>
+    </nav>
+  </aside>
+  <main class="content">
+
+    <div class="card">
+      <h3 class="section-title">Nuevo Reclamo</h3>
+
+      <!-- Formulario para nuevo reclamo -->
+      <div id="formularioReclamo">
+        <div class="form-row">
+          <div>
+            <div class="label">Reserva*</div>
+            <input type="text" id="codigoReserva" class="input" placeholder="Código de reserva" value="" />
+          </div>
+          <div>
+            <div class="label">Vuelo*</div>
+            <input type="text" id="vueloReclamo" class="input" placeholder="Número de vuelo" value="" />
+          </div>
+          <div>
+            <div class="label">Pasajero*</div>
+            <input type="text" id="pasajeroReclamo" class="input" placeholder="Nombre del pasajero" value="" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <div class="label">Tipo de Reclamo*</div>
+            <select id="tipoReclamo" class="select" onchange="mostrarCamposAdicionales()">
+              <option value="">Seleccione un tipo</option>
+              <option value="equipaje">Equipaje dañado/perdido</option>
+              <option value="retraso">Retraso del vuelo</option>
+              <option value="servicio">Mal servicio a bordo</option>
+              <option value="cancelacion">Cancelación de vuelo</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Campos adicionales según tipo de reclamo -->
+        <div id="camposAdicionales" style="display: none;">
+          <div class="form-row" id="campoEquipaje" style="display: none;">
+            <div>
+              <div class="label">Tipo de problema con equipaje*</div>
+              <select class="select" id="tipoEquipaje">
+                <option value="">Seleccione</option>
+                <option value="danado">Equipaje dañado</option>
+                <option value="perdido">Equipaje perdido</option>
+                <option value="demora">Demora en entrega</option>
+              </select>
+            </div>
+            <div>
+              <div class="label">Descripción del daño*</div>
+              <input type="text" id="descripcionEquipaje" class="input" placeholder="Describa el daño" />
+            </div>
+          </div>
+
+          <div class="form-row" id="campoRetraso" style="display: none;">
+            <div>
+              <div class="label">Tiempo de retraso*</div>
+              <select class="select" id="tiempoRetraso">
+                <option value="">Seleccione</option>
+                <option value="1-2">1-2 horas</option>
+                <option value="3-5">3-5 horas</option>
+                <option value="mas5">Más de 5 horas</option>
+              </select>
+            </div>
+            <div>
+              <div class="label">¿Fue notificado con anticipación?*</div>
+              <select class="select" id="notificacionRetraso">
+                <option value="">Seleccione</option>
+                <option value="si">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div style="flex: 1;">
+            <div class="label">Descripción detallada del reclamo*</div>
+            <textarea
+                    id="descripcionReclamo"
+                    class="input"
+                    placeholder="Describa su reclamo en detalle..."
+                    rows="4"
+                    style="resize: vertical; min-height: 100px; overflow-y: auto;"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:16px">
+          <button class="btn secondary" type="button" onclick="limpiarFormulario()">Cancelar</button>
+          <button class="btn right" type="button" onclick="enviarReclamo()">Enviar Reclamo</button>
+        </div>
+      </div>
+
+      <hr style="margin: 24px 0;" />
+
+      <h3 class="section-title">Mis Reclamos</h3>
+      <div class="space-y" id="listaReclamos" style="max-height: 400px; overflow-y: auto; padding-right: 8px;">
+        <!-- Los reclamos se cargarán aquí dinámicamente -->
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Cargar parámetros de la URL si existen
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const reserva = urlParams.get('reserva');
+    const vuelo = urlParams.get('vuelo');
+    const pasajero = urlParams.get('pasajero');
+
+    if (reserva) {
+      document.getElementById('codigoReserva').value = reserva;
+    }
+    if (vuelo) {
+      document.getElementById('vueloReclamo').value = vuelo;
+    }
+    if (pasajero) {
+      document.getElementById('pasajeroReclamo').value = pasajero;
+    }
+
+    cargarReclamos();
+  });
+
+  function mostrarCamposAdicionales() {
+    const tipoReclamo = document.getElementById('tipoReclamo').value;
+    const camposAdicionales = document.getElementById('camposAdicionales');
+
+    // Ocultar todos los campos primero
+    document.getElementById('campoEquipaje').style.display = 'none';
+    document.getElementById('campoRetraso').style.display = 'none';
+
+    if (tipoReclamo) {
+      camposAdicionales.style.display = 'block';
+
+      if (tipoReclamo === 'equipaje') {
+        document.getElementById('campoEquipaje').style.display = 'flex';
+      } else if (tipoReclamo === 'retraso') {
+        document.getElementById('campoRetraso').style.display = 'flex';
+      }
+    } else {
+      camposAdicionales.style.display = 'none';
+    }
+  }
+
+  function limpiarFormulario() {
+    document.getElementById('formularioReclamo').reset();
+    document.getElementById('camposAdicionales').style.display = 'none';
+    document.getElementById('descripcionReclamo').value = '';
+  }
+
+  function enviarReclamo() {
+    const codigoReserva = document.getElementById('codigoReserva').value;
+    const vuelo = document.getElementById('vueloReclamo').value;
+    const pasajero = document.getElementById('pasajeroReclamo').value;
+    const tipoReclamo = document.getElementById('tipoReclamo').value;
+    const descripcion = document.getElementById('descripcionReclamo').value;
+
+    if (!codigoReserva || !vuelo || !pasajero || !tipoReclamo || !descripcion) {
+      alert('Por favor, complete todos los campos obligatorios.');
+      return;
+    }
+
+    // Validar campos adicionales según el tipo
+    if (tipoReclamo === 'equipaje') {
+      const tipoEquipaje = document.getElementById('tipoEquipaje').value;
+      const descEquipaje = document.getElementById('descripcionEquipaje').value;
+      if (!tipoEquipaje || !descEquipaje) {
+        alert('Por favor, complete los campos adicionales para equipaje.');
+        return;
+      }
+    } else if (tipoReclamo === 'retraso') {
+      const tiempoRetraso = document.getElementById('tiempoRetraso').value;
+      const notificacion = document.getElementById('notificacionRetraso').value;
+      if (!tiempoRetraso || !notificacion) {
+        alert('Por favor, complete los campos adicionales para retraso.');
+        return;
+      }
+    }
+
+    // Crear objeto de reclamo
+    const reclamo = {
+      id: Date.now().toString(),
+      reserva: codigoReserva,
+      vuelo: vuelo,
+      pasajero: pasajero,
+      tipo: tipoReclamo,
+      descripcion: descripcion,
+      fecha: new Date().toLocaleDateString('es-ES'),
+      estado: 'Pendiente'
+    };
+
+    // Agregar datos adicionales según el tipo
+    if (tipoReclamo === 'equipaje') {
+      reclamo.tipoEquipaje = document.getElementById('tipoEquipaje').value;
+      reclamo.descripcionEquipaje = document.getElementById('descripcionEquipaje').value;
+    } else if (tipoReclamo === 'retraso') {
+      reclamo.tiempoRetraso = document.getElementById('tiempoRetraso').value;
+      reclamo.notificacion = document.getElementById('notificacionRetraso').value;
+    }
+
+    // Guardar en localStorage
+    const reclamos = JSON.parse(localStorage.getItem('reclamos')) || [];
+    reclamos.push(reclamo);
+    localStorage.setItem('reclamos', JSON.stringify(reclamos));
+
+    alert('Su reclamo ha sido enviado exitosamente. Nos pondremos en contacto pronto.');
+    limpiarFormulario();
+    cargarReclamos();
+  }
+
+  function cargarReclamos() {
+    const listaReclamos = document.getElementById('listaReclamos');
+    const reclamos = JSON.parse(localStorage.getItem('reclamos')) || [];
+
+    listaReclamos.innerHTML = '';
+
+    if (reclamos.length === 0) {
+      listaReclamos.innerHTML = '<div class="muted" style="padding: 12px; text-align: center;">No tiene reclamos registrados.</div>';
+      return;
+    }
+
+    // Ordenar reclamos por fecha (más recientes primero)
+    reclamos.sort((a, b) => b.id - a.id);
+
+    reclamos.forEach(reclamo => {
+      const reclamoElement = document.createElement('div');
+      reclamoElement.className = 'input';
+      reclamoElement.style.padding = '12px';
+      reclamoElement.style.background = '#e7e7e7';
+      reclamoElement.style.marginBottom = '8px';
+      reclamoElement.style.borderRadius = '4px';
+
+      let tipoTexto = '';
+      switch(reclamo.tipo) {
+        case 'equipaje': tipoTexto = 'Equipaje dañado/perdido'; break;
+        case 'retraso': tipoTexto = 'Retraso del vuelo'; break;
+        case 'servicio': tipoTexto = 'Mal servicio a bordo'; break;
+        case 'cancelacion': tipoTexto = 'Cancelación de vuelo'; break;
+        default: tipoTexto = 'Otro';
+      }
+
+      let detallesAdicionales = '';
+      if (reclamo.tipo === 'equipaje') {
+        detallesAdicionales = `<div class="muted" style="font-size:12px; margin-top:2px;">Problema: ${reclamo.tipoEquipaje} - ${reclamo.descripcionEquipaje}</div>`;
+      } else if (reclamo.tipo === 'retraso') {
+        detallesAdicionales = `<div class="muted" style="font-size:12px; margin-top:2px;">Retraso: ${reclamo.tiempoRetraso} horas - Notificado: ${reclamo.notificacion}</div>`;
+      }
+
+      reclamoElement.innerHTML = `
+        <div class="muted"><b>Reserva: ${reclamo.reserva} | Vuelo: ${reclamo.vuelo} | Tipo: ${tipoTexto}</b></div>
+        <div class="muted">${reclamo.descripcion}</div>
+        ${detallesAdicionales}
+        <div class="muted" style="font-size:12px;margin-top:4px;">
+          Fecha: ${reclamo.fecha} | Estado: <span style="color: ${reclamo.estado === 'Pendiente' ? '#e67e22' : '#27ae60'}">${reclamo.estado}</span>
+        </div>
+      `;
+
+      listaReclamos.appendChild(reclamoElement);
+    });
+  }
+</script>
+</body>
+</html>
