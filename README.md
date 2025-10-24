@@ -6,6 +6,11 @@ Proyecto integrado: **Backend Spring Boot 3 + JWT + JPA + Swagger** y **Frontend
 empaquetado como **una sola app**. El frontend se construye con Maven y se copia a
 `src/main/resources/static`.
 
+## Distribucion
+- Rama Marvin: Proyecto (codio Backend y Fronent).
+- Rama Stanley Documento
+- Rama Jonatham Manual tecnico y Base de Datos
+
 ## Requisitos
 - Java 17
 - Maven 3.9+
